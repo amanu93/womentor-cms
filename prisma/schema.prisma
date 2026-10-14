@@ -1,0 +1,250 @@
+// WOMENTOR Africa CMS data model.
+// SQLite by default; switch `provider` to "postgresql" and update DATABASE_URL for production.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ---------- Auth ----------
+
+model User {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  name         String
+  passwordHash String
+  role         String    @default("EDITOR") // ADMIN | EDITOR
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  sessions     Session[]
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+// ---------- Singletons (always id = 1) ----------
+
+model SiteSettings {
+  id                 Int     @id @default(1)
+  siteName           String  @default("Womentor Africa")
+  tagline            String  @default("Lifting as We Rise")
+  metaTitle          String  @default("Womentor")
+  metaDescription    String  @default("For Women by Women")
+  logoUrl            String  @default("/images/logos/womentorIcon.svg")
+  appUrl             String  @default("https://my.womentorafrica.com")
+  loginLabel         String  @default("Login")
+  partnershipsEmail  String  @default("partnerships@womentorafrica.com")
+  infoEmail          String  @default("info@womentorafrica.com")
+  phone              String  @default("+254 719 286 229")
+  organisationName   String  @default("African WoMentors Ltd")
+  addressLine1       String  @default("2nd Floor, The AXIS, 26 Bank Street")
+  addressLine2       String  @default("Cybercity, Ebène 72201")
+  addressCountry     String  @default("Mauritius")
+  instagramUrl       String  @default("https://www.instagram.com/womentorafrica/")
+  linkedinUrl        String  @default("https://www.linkedin.com/company/womentorafrica/")
+  copyrightText      String  @default("© 2025 Womentor Africa | Lifting as We Rise")
+  // Signup configuration (mirrors api.womentorafrica.com /public/configuration/signup/status)
+  menteeSignup       Boolean @default(true)
+  menteeWaitlist     Boolean @default(true)
+  mentorSignup       Boolean @default(true)
+  mentorWaitlist     Boolean @default(true)
+  showNews           Boolean @default(true)
+  showEvents         Boolean @default(true)
+  updatedAt          DateTime @updatedAt
+}
+
+model HomeContent {
+  id                       Int    @id @default(1)
+  // Hero
+  heroTitle                String @default("Lifting as\nWe Rise")
+  heroSubtitle             String @default("")
+  heroQuote                String @default("")
+  heroCtaLabel             String @default("Learn more")
+  heroCtaTarget            String @default("about")
+  heroImage                String @default("/images/illustrations/heroImage.svg")
+  // About
+  aboutTitle               String @default("About Womentor Africa")
+  // Approach / pillars
+  approachTitle            String @default("Our Approach")
+  approachIntro            String @default("")
+  // Mentorship overview
+  mentorshipTitle          String @default("Mentorship Overview")
+  mentorshipBody           String @default("")
+  mentorshipImage          String @default("/images/illustrations/womenPicture.svg")
+  featuresTitle            String @default("What makes our mentorship program unique:")
+  featuresImage            String @default("/images/illustrations/womenInsideACircle.svg")
+  // What to expect
+  expectTitle              String @default("What to Expect")
+  expectIntro              String @default("")
+  expectCtaTitle           String @default("Ready to grow, give back, and rise together?")
+  expectCtaBody            String @default("")
+  // Quote banner
+  quoteText                String @default("")
+  // Impact
+  impactTitle              String @default("Our Impact")
+  impactIntro              String @default("")
+  // Partners
+  partnersTitle            String @default("Partners")
+  partnersSubtitle         String @default("Supported by Visionary Partners")
+  // Community CTA
+  communityTitle           String @default("Together, we lift. Together, we rise.")
+  communityBody            String @default("")
+  communityImage           String @default("/images/illustrations/womensHoldingHand.svg")
+  // Contact section
+  partnerTitle             String @default("Partner With Us")
+  partnerBody              String @default("")
+  followTitle              String @default("Follow Womentor Africa")
+  followBody               String @default("")
+  contactTitle             String @default("Contact Information")
+  // Signup modal
+  signupWelcome            String @default("Welcome to Womentor Africa!")
+  signupPrompt             String @default("Select the role you're interested in")
+  menteeBenefits           String @default("")
+  mentorBenefits           String @default("")
+  updatedAt                DateTime @updatedAt
+}
+
+// ---------- Ordered collections ----------
+
+model AboutSlide {
+  id        String  @id @default(cuid())
+  heading   String
+  title     String
+  content   String
+  image     String  @default("")
+  order     Int     @default(0)
+  published Boolean @default(true)
+  updatedAt DateTime @updatedAt
+}
+
+model Pillar {
+  id          String  @id @default(cuid())
+  title       String
+  description String
+  icon        String  @default("")
+  color       String  @default("orange") // orange | amber | pink
+  order       Int     @default(0)
+  published   Boolean @default(true)
+  updatedAt   DateTime @updatedAt
+}
+
+model Feature {
+  id          String  @id @default(cuid())
+  title       String
+  description String
+  order       Int     @default(0)
+  published   Boolean @default(true)
+  updatedAt   DateTime @updatedAt
+}
+
+model ExpectTab {
+  id        String  @id @default(cuid())
+  title     String
+  body      String  // Markdown
+  order     Int     @default(0)
+  published Boolean @default(true)
+  updatedAt DateTime @updatedAt
+}
+
+model Faq {
+  id        String  @id @default(cuid())
+  question  String
+  answer    String
+  order     Int     @default(0)
+  published Boolean @default(true)
+  updatedAt DateTime @updatedAt
+}
+
+model Stat {
+  id          String  @id @default(cuid())
+  value       String
+  label       String
+  description String  @default("")
+  icon        String  @default("users")
+  order       Int     @default(0)
+  published   Boolean @default(true)
+  updatedAt   DateTime @updatedAt
+}
+
+model Partner {
+  id        String  @id @default(cuid())
+  name      String
+  logo      String
+  website   String  @default("")
+  order     Int     @default(0)
+  published Boolean @default(true)
+  updatedAt DateTime @updatedAt
+}
+
+model Post {
+  id          String    @id @default(cuid())
+  title       String
+  slug        String    @unique
+  excerpt     String    @default("")
+  body        String    @default("") // Markdown
+  coverImage  String    @default("")
+  author      String    @default("")
+  publishedAt DateTime?
+  published   Boolean   @default(false)
+  order       Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Event {
+  id          String    @id @default(cuid())
+  title       String
+  slug        String    @unique
+  summary     String    @default("")
+  body        String    @default("") // Markdown
+  coverImage  String    @default("")
+  location    String    @default("Online")
+  startsAt    DateTime
+  endsAt      DateTime?
+  registerUrl String    @default("")
+  published   Boolean   @default(false)
+  order       Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+// ---------- Media & inbox ----------
+
+model Media {
+  id        String   @id @default(cuid())
+  filename  String
+  url       String
+  mimeType  String
+  size      Int
+  alt       String   @default("")
+  createdAt DateTime @default(now())
+}
+
+model WaitlistSubscriber {
+  id        String   @id @default(cuid())
+  email     String
+  role      String   // mentee | mentor
+  createdAt DateTime @default(now())
+
+  @@unique([email, role])
+}
+
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  subject   String   @default("")
+  message   String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+}

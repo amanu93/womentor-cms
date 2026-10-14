@@ -1,26 +1,61 @@
 @import "tailwindcss";
 
+@theme {
+  --color-brand-50: #fff8f1;
+  --color-brand-100: #ffedd4;
+  --color-brand-200: #fcd9bd;
+  --color-brand-300: #ffd7a7;
+  --color-brand-500: #ff5a1f;
+  --color-brand-600: #d54407;
+  --color-brand-700: #b43403;
+  --color-brand-800: #7f2c0f;
+  --color-brand-900: #451305;
+  --color-gold: #c19a5b;
+  --font-sans: var(--font-lato), ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-montserrat), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-playfair), Georgia, serif;
+}
+
 :root {
   --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --foreground: #101828;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+}
+
+h1, h2, h3, h4 { font-family: var(--font-heading); }
+
+@layer components {
+  .input {
+    @apply block w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 disabled:bg-gray-50;
+  }
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-500/40 disabled:opacity-60;
+  }
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm transition hover:bg-gray-50 disabled:opacity-60;
+  }
+  .btn-danger {
+    @apply inline-flex items-center justify-center rounded-lg px-3 py-1.5 text-sm font-medium text-red-600 transition hover:bg-red-50;
+  }
+  .card {
+    @apply rounded-xl border border-gray-200 bg-white shadow-sm;
+  }
+  .prose-site {
+    @apply text-[#4A5565] leading-relaxed;
+  }
+  .prose-site p { @apply mb-4; }
+  .prose-site p:last-child { @apply mb-0; }
+  .prose-site ul { @apply mb-4 list-disc pl-6 space-y-1; }
+  .prose-site ol { @apply mb-4 list-decimal pl-6 space-y-1; }
+  .prose-site strong { @apply font-bold text-gray-900; }
+  .prose-site a { @apply text-brand-600 underline; }
+  .prose-site h2 { @apply text-2xl font-bold text-gray-900 mt-8 mb-3; }
+  .prose-site h3 { @apply text-xl font-bold text-gray-900 mt-6 mb-2; }
+  .prose-site img { @apply rounded-xl my-4; }
+  .prose-site blockquote { @apply border-l-4 border-brand-300 pl-4 italic my-4; }
 }
